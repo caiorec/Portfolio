@@ -119,3 +119,9 @@ section { padding: 72px var(--pad); }
   #tabs { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+.stage.ig { aspect-ratio: auto; background: none; }
+.stage.ig iframe { width: min(100%, 420px); height: min(80vh, 760px); }
+.igfallback { margin-top: 12px; font-size: .85rem; text-align: center; }
+.igfallback a { color: var(--muted); border-bottom: 1px solid var(--line); }
+.igfallback a:hover { color: var(--fg); }

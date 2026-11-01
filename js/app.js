@@ -35,6 +35,7 @@
     return "background-image:linear-gradient(135deg,hsl(" + h + " 45% 22%),hsl(" + ((h + 50) % 360) + " 55% 12%))";
   }
   function catName(id) {
+    if (!id) return "";
     var c = S.categories.filter(function (x) { return x.id === id; })[0];
     return c ? c[lang] : id;
   }
@@ -91,7 +92,7 @@
         el("div", { class: "card-meta" }, [
           el("strong", { text: w.brand }),
           el("span", { text: wTitle(w) }),
-          el("small", { text: catName(w.cat) + " · " + w.year })
+          el("small", { text: [catName(w.cat), w.year].filter(Boolean).join(" · ") })
         ]),
         sample(w)
       ]));
@@ -102,7 +103,8 @@
       b.appendChild(el("li", {}, [br.logo ? el("img", { src: br.logo, alt: br.name, loading: "lazy" }) : el("span", { text: br.name })]));
     });
     var mail = document.getElementById("mail");
-    mail.href = "mailto:" + S.email; mail.textContent = S.email;
+    if (S.email) { mail.href = "mailto:" + S.email; mail.textContent = S.email; }
+    else { mail.href = S.instagram; mail.target = "_blank"; mail.rel = "noopener"; mail.textContent = "@" + S.instagram.replace(/\/$/, "").split("/").pop(); }
   }
 
   // ---------- lista de trabalhos ----------
@@ -123,7 +125,7 @@
       var a = el("a", { href: wUrl(w) }, [
         el("span", { class: "brand", text: w.brand }),
         el("span", { class: "ttl", text: wTitle(w) }),
-        el("span", { class: "cat", text: catName(w.cat) + " · " + w.year }),
+        el("span", { class: "cat", text: [catName(w.cat), w.year].filter(Boolean).join(" · ") }),
         sample(w),
         el("span", { class: "inline-thumb", style: thumbStyle(w), "aria-hidden": "true" })
       ]);
@@ -162,8 +164,8 @@
     } else if (v.type === "file" && v.src) {
       stage.appendChild(el("video", { src: v.src, controls: "", playsinline: "", preload: "metadata", poster: w.thumb || "" }));
     } else if (v.type === "instagram" && v.src) {
-      stage.className += " poster"; stage.setAttribute("style", thumbStyle(w));
-      stage.appendChild(el("a", { class: "btn", href: v.src, target: "_blank", rel: "noopener", text: t("project.watch.instagram") + " ↗" }));
+      stage.className += " ig";
+      stage.appendChild(el("iframe", { src: v.src.replace(/\/?$/, "/") + "embed", title: wTitle(w), loading: "lazy", allowfullscreen: "", scrolling: "no" }));
     } else {
       stage.className += " poster"; stage.setAttribute("style", thumbStyle(w));
       stage.appendChild(el("p", { class: "soon", text: t("project.empty") }));
@@ -171,9 +173,10 @@
 
     root.appendChild(el("a", { class: "back", href: "work.html", text: "← " + t("project.back") }));
     root.appendChild(stage);
+    if (v.type === "instagram" && v.src) root.appendChild(el("p", { class: "igfallback" }, [el("a", { href: v.src, target: "_blank", rel: "noopener", text: t("project.watch.instagram") + " ↗" })]));
     root.appendChild(el("div", { class: "pmeta" }, [
       el("div", {}, [el("p", { class: "brand", text: w.brand }), el("h1", { text: wTitle(w) }), sample(w)]),
-      el("div", {}, [el("p", { text: w.desc[lang] }), el("p", { class: "cat", text: catName(w.cat) + " · " + w.year })])
+      el("div", {}, [el("p", { text: w.desc[lang] }), el("p", { class: "cat", text: [catName(w.cat), w.year].filter(Boolean).join(" · ") })])
     ]));
     root.appendChild(el("a", { class: "next", href: wUrl(next) }, [
       el("small", { text: t("project.next") }), el("strong", { text: next.brand + " — " + wTitle(next) + " →" })
