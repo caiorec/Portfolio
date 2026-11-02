@@ -30,9 +30,10 @@
   }
   function hue(id) { var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 360; return h; }
   function thumbStyle(w) {
-    if (w.thumb) return "background-image:url('" + w.thumb + "')";
     var h = hue(w.id);
-    return "background-image:linear-gradient(135deg,hsl(" + h + " 45% 22%),hsl(" + ((h + 50) % 360) + " 55% 12%))";
+    var grad = "linear-gradient(135deg,hsl(" + h + " 45% 22%),hsl(" + ((h + 50) % 360) + " 55% 12%))";
+    var img = w.thumb || (w.video && w.video.type === "youtube" && w.video.src ? "https://i.ytimg.com/vi/" + w.video.src + "/hqdefault.jpg" : "");
+    return "background-image:" + (img ? "url('" + img + "')," : "") + grad;
   }
   function catName(id) {
     if (!id) return "";
